@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: citibike_raw
+    description: Raw data loaded by the scripts in loaders/, unmodified.
+    database: workspace
+    schema: citibike_raw
+    tables:
+      - name: trips
+        description: Monthly Citi Bike trip files, loaded from Parquet with COPY INTO.
+      - name: station_status_snapshots
+        description: One row per captured station_status feed file, with stations nested.
+      - name: station_information_snapshots
+        description: One row per captured station_information feed file, with stations nested.

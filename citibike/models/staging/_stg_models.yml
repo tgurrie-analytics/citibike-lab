@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: stg_trips
+    description: One row per trip. Times in both New York local time and UTC.
+    columns:
+      - name: ride_id
+        tests: [unique, not_null]
+      - name: rider_type
+        tests:
+          - accepted_values:
+              values: ['member', 'casual']
+      - name: rideable_type
+        tests:
+          - accepted_values:
+              values: ['classic_bike', 'electric_bike']
+      - name: started_at_utc
+        tests: [not_null]
