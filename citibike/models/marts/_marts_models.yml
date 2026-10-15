@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: dim_stations
+    description: >
+      One row per station, combining the live feed (current details) with trip
+      history (including retired stations). Feed values win where both exist.
+    columns:
+      - name: station_short_name
+        description: Station code used in trip files; primary key.
+        tests: [unique, not_null]

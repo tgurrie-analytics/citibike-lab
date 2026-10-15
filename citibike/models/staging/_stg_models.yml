@@ -16,3 +16,20 @@ models:
               values: ['classic_bike', 'electric_bike']
       - name: started_at_utc
         tests: [not_null]
+  - name: stg_station_status
+    description: One row per station per captured snapshot.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [station_id, pulled_at_utc]
+    columns:
+      - name: station_id
+        tests: [not_null]
+
+  - name: stg_station_information
+    description: One row per station per captured snapshot.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [station_id, pulled_at_utc]
+    columns:
+      - name: short_name
+        tests: [not_null]
