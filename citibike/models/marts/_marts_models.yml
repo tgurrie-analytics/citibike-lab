@@ -9,3 +9,24 @@ models:
       - name: station_short_name
         description: Station code used in trip files; primary key.
         tests: [unique, not_null]
+  - name: fct_trips
+    description: >
+      One row per trip. Station codes link to dim_stations. Times in UTC and New York
+      local time. Built incrementally on loaded_at_utc.
+    columns:
+      - name: ride_id
+        tests: [unique, not_null]
+      - name: start_station_short_name
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_stations')
+                field: station_short_name
+      - name: end_station_short_name
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_stations')
+                field: station_short_name
+      - name: straight_line_km
+        description: Straight-line distance between start and end coordinates, not the route ridden.
