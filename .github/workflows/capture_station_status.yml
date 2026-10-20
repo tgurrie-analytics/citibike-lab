@@ -1,0 +1,33 @@
+name: Capture station status
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements-capture.txt
+
+      - name: Install capture dependencies
+        run: pip install -r requirements-capture.txt
+
+      - name: Capture station status
+        run: python loaders/capture_gbfs.py --feeds station_status
+
+      - name: Upload to Databricks volume
+        run: python loaders/upload_to_volume.py --local data/landing --volume /Volumes/workspace/citibike_raw/landing/gbfs --pattern "*.json.gz"
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
