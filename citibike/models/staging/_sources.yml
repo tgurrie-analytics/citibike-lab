@@ -10,5 +10,10 @@ sources:
         description: Monthly Citi Bike trip files, loaded from Parquet with COPY INTO.
       - name: station_status_snapshots
         description: One row per captured station_status feed file, with stations nested.
+        config:
+          loaded_at_field: "cast(pulled_at as timestamp)"
+          freshness:
+            warn_after: {count: 26, period: hour}
+            error_after: {count: 50, period: hour}
       - name: station_information_snapshots
         description: One row per captured station_information feed file, with stations nested.
