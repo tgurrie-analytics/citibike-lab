@@ -1,0 +1,44 @@
+name: Daily load and build
+
+on:
+  schedule:
+    - cron: "41 10 * * *"
+  workflow_dispatch:
+
+jobs:
+  load-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DATABRICKS_SERVER_HOSTNAME: ${{ secrets.DATABRICKS_SERVER_HOSTNAME }}
+      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DBT_PROFILES_DIR: ${{ github.workspace }}/.github/dbt
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements-transform.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-transform.txt
+
+      - name: Load new files into raw tables
+        run: python loaders/load_raw.py
+
+      - name: Install dbt packages
+        working-directory: citibike
+        run: dbt deps
+
+      - name: Check source freshness
+        working-directory: citibike
+        run: dbt source freshness
+
+      - name: Build and test models
+        working-directory: citibike
+        run: dbt build
