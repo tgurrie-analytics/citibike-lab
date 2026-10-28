@@ -37,3 +37,7 @@ models:
       +materialized: view
     marts:
       +materialized: table
+
+vars:
+  # First hour of reliable hourly capture (cron-job.org triggers began). UTC.
+  station_status_reliable_from_utc: "2026-10-22 00:00:00"

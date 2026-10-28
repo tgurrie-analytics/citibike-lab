@@ -5,7 +5,7 @@ with bounds as (
         date_trunc('hour', min(pulled_at_utc)) as first_hour,
         date_trunc('hour', max(pulled_at_utc)) as last_hour
     from {{ ref('stg_station_status') }}
-    where pulled_at_utc >= current_timestamp() - interval 7 days
+    where pulled_at_utc >= greatest((current_timestamp() - interval 7 days), cast('{{ var('station_status_reliable_from_utc') }}' as timestamp))
 ),
 
 expected_hours as (
